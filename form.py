@@ -24,12 +24,12 @@ def multi_checkbox(options: dict[str, str], cols: int = 2) -> list[str]:
 # 主表單
 def render_public_plan(plan_type):
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
-    st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，來為您家毛寶貝選擇最貼心的福利吧！")
+    st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，來為你嘅Pet Pet選擇最貼心的福利吧！")
 
-    owner = st.text_input("👤 毛爸毛媽，請輸入您的大名：")
-    pet_name = st.text_input("🐾 毛孩的小名：")
+    owner = st.text_input("👤 Pet爸Pet媽，請輸入您的大名：")
+    pet_name = st.text_input("🐾 Pet Pet的小名：")
 
-    chipped = st.text_input("🔖 毛孩的晶片號碼：（如果沒有，請填寫NA）")
+    chipped = st.text_input("🔖 Pet Pet嘅晶片號碼：（如果沒有，請填寫NA）")
     if chipped and is_existing_chip(chipped, db_path):
         st.warning("⚠️ 晶片號已存在，請輸入不同的號碼")
     phone = st.text_input("📞 聯絡電話（必填）")
@@ -37,7 +37,7 @@ def render_public_plan(plan_type):
     wechat_id = st.text_input("💬 Wechat ID（建議）")
     
     st.markdown("### 🐥 基本資訊")
-    pet_type = st.radio("請問您的寶貝是？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"])  
+    pet_type = st.radio("請問你嘅Pet Pet喺？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"])  
     if pet_type == "喵喵！ 🐱（暫不開放！）":
         st.warning("暫不適用")
         return 
@@ -47,20 +47,20 @@ def render_public_plan(plan_type):
     }
 
     pet_idx = ["汪汪🐶", "喵喵🐱"]
-    breed = st.selectbox(f"✨ 選擇您家{pet_idx}的品種：", breeds[pet_type])
+    breed = st.selectbox(f"✨ 選擇您家{pet_idx}嘅品種：", breeds[pet_type])
     if breed == "其他":
-        breed = st.text_input("請輸入您的寶貝特殊品種：")
+        breed = st.text_input("請輸入您的Pet Pet嘅品種：")
 
     dob = st.date_input(
-        "🎂 請選擇寶貝的出生日期：",
+        "🎂 請選擇Pet Pet 嘅出生日期：",
         min_value=datetime.date(1990,1,1),
         max_value=datetime.date.today(),
         key="dob"
     )
     today = datetime.date.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-    st.write(f"🐥 寶貝年齡：**{age}** 歲")
-    weight_input = st.text_input("🐥 寶貝體重（kg）：", placeholder="例：5.2")
+    st.write(f"🐥 Pet Pet年齡：**{age}** 歲")
+    weight_input = st.text_input("🐥 Pet Pet體重（kg）：", placeholder="例：5.2")
     try:
         weight = float(weight_input)
         weight_valid = True
@@ -153,14 +153,14 @@ def render_public_plan(plan_type):
         )
         monthly_premium = total_monthly_premium/term
 
-    submitted = st.button("💌 立即送出，成為俱樂部一員，保護寶貝")
+    submitted = st.button("💌 立即送出，成為俱樂部一員，保護Pet Pet")
     comment = st.text_area("💬 其他留言或建議（選填）", help="留下您對 Club 嘅想法、建議都好 😊")
     if submitted:
         # 驗證必填
         errors = []
-        if not owner:    errors.append("👤 主人姓名")
-        if not pet_name: errors.append("🐾 寶貝名字")
-        if not breed:    errors.append("🐾 寶貝品種")
+        if not owner:    errors.append("👤 Pet Pet主人姓名")
+        if not pet_name: errors.append("🐾 Pet Pet名字")
+        if not breed:    errors.append("🐾 Pet Pet品種")
         if not phone:    errors.append("📞 聯絡電話")
         if not email or '@' not in email: errors.append("✉️ 有效電郵")
         if not chipped:  errors.append("🔖 晶片號碼")
@@ -213,7 +213,7 @@ def render_public_plan(plan_type):
             time.sleep(1)
 
         st.success(
-            f"🎉 恭喜你，{pet_name}的{term}個月預計會員費已生成：\n\n"
+            f"🎉 恭喜你，{pet_name}嘅{term}個月預計會員費已生成：\n\n"
             f"- **總金額：** MOP {total_monthly_premium:.2f} 元\n"
             f"- **每月額外：** MOP {extra_premium:.2f} 元\n"
             f"- **手續費總額：** MOP {total_extra_premium:.2f} 元\n\n"
@@ -226,12 +226,12 @@ def render_public_plan(plan_type):
 
 def render_private_plan(plan_type):
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
-    st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，來為您家毛寶貝選擇最貼心的福利吧！")
+    st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，來為您嘅Pet Pet選擇最貼心的福利吧！")
 
-    owner = st.text_input("👤 毛爸毛媽，請輸入您的大名：")
-    pet_name = st.text_input("🐾 毛孩的小名：")
+    owner = st.text_input("👤 Pet爸Pet媽，請輸入您的大名：")
+    pet_name = st.text_input("🐾 Pet Pet嘅小名：")
 
-    chipped = st.text_input("🔖 毛孩的晶片號碼：（如果沒有，請填寫NA）")
+    chipped = st.text_input("🔖 Pet Pet嘅晶片號碼：（如果沒有，請填寫NA）")
     if chipped and is_existing_chip(chipped, db_path):
         st.warning("⚠️ 晶片號已存在，請輸入不同的號碼")
     phone = st.text_input("📞 聯絡電話（必填）")
@@ -239,7 +239,7 @@ def render_private_plan(plan_type):
     wechat_id = st.text_input("💬 Wechat ID（建議）")
     
     st.markdown("### 🐥 基本資訊")
-    pet_type = st.radio("請問您的寶貝是？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"])  
+    pet_type = st.radio("請問您嘅Pet Pet喺？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"])  
     if pet_type == "喵喵！ 🐱（暫不開放！）":
         st.warning("暫不適用")
         return 
@@ -249,20 +249,20 @@ def render_private_plan(plan_type):
     }
 
     pet_idx = ["汪汪🐶", "喵喵🐱"]
-    breed = st.selectbox(f"✨ 選擇您家{pet_idx}的品種：", breeds[pet_type])
+    breed = st.selectbox(f"✨ 選擇您家{pet_idx}嘅品種：", breeds[pet_type])
     if breed == "其他":
-        breed = st.text_input("請輸入您的寶貝特殊品種：")
+        breed = st.text_input("請輸入您Pet Pet 嘅品種：")
 
     dob = st.date_input(
-        "🎂 請選擇寶貝的出生日期：",
+        "🎂 請選擇Pet Pet嘅出生日期：",
         min_value=datetime.date(1990,1,1),
         max_value=datetime.date.today(),
         key="dob"
     )
     today = datetime.date.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-    st.write(f"🐥 寶貝年齡：**{age}** 歲")
-    weight_input = st.text_input("🐥 寶貝體重（kg）：", placeholder="例：5.2")
+    st.write(f"🐥 Pet Pet年齡：**{age}** 歲")
+    weight_input = st.text_input("🐥 Pet Pet體重（kg）：", placeholder="例：5.2")
     try:
         weight = float(weight_input)
         weight_valid = True
@@ -355,14 +355,14 @@ def render_private_plan(plan_type):
         )
         monthly_premium = total_monthly_premium/term
 
-    submitted = st.button("💌 立即送出，成為俱樂部一員，保護寶貝")
+    submitted = st.button("💌 立即送出，成為俱樂部一員，保護Pet Pet")
     comment = st.text_area("💬 其他留言或建議（選填）", help="留下您對 Club 嘅想法、建議都好 😊")
     if submitted:
         # 驗證必填
         errors = []
-        if not owner:    errors.append("👤 主人姓名")
-        if not pet_name: errors.append("🐾 寶貝名字")
-        if not breed:    errors.append("🐾 寶貝品種")
+        if not owner:    errors.append("👤 Pet Pet 主人姓名")
+        if not pet_name: errors.append("🐾 Pet Pet名字")
+        if not breed:    errors.append("🐾 Pet Pet品種")
         if not phone:    errors.append("📞 聯絡電話")
         if not email or '@' not in email: errors.append("✉️ 有效電郵")
         if not chipped:  errors.append("🔖 晶片號碼")
@@ -415,7 +415,7 @@ def render_private_plan(plan_type):
             time.sleep(1)
 
         st.success(
-            f"🎉 已成功儲存！{pet_name}的{term}個月預計會員費已生成：\n\n"
+            f"🎉 已成功儲存！{pet_name}嘅{term}個月預計會員費已生成：\n\n"
             f"- **總金額：** MOP {total_monthly_premium:.2f} 元\n"
             f"- **每月額外：** MOP {extra_premium:.2f} 元\n"
             f"- **手續費總額：** MOP {total_extra_premium:.2f} 元\n\n"
