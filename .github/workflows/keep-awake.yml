@@ -1,0 +1,10 @@
+name: Keep Streamlit Awake
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # 每 30 分钟执行一次
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        run: curl -s https://mopetpetclub-apyifhjxhnwkcfo6ghfbkl.streamlit.app/ > /dev/null
