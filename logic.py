@@ -1,0 +1,353 @@
+import sqlite3
+import os
+import pandas as pd
+import numpy as np
+
+db_path = os.path.join(os.path.dirname(__file__), "application.db")
+
+def init_db(db_path=db_path):
+    os.makedirs(os.path.dirname(db_path) or '.', exist_ok=True)
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS application (
+        id                     INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_at             DATETIME DEFAULT CURRENT_TIMESTAMP,
+        owner                  TEXT    NOT NULL DEFAULT '',
+        wechat_id              TEXT    NOT NULL DEFAULT '',
+        phone                  TEXT    NOT NULL DEFAULT '',
+        email                  TEXT    NOT NULL DEFAULT '',
+        pet_name               TEXT    NOT NULL DEFAULT '',
+        pet_type               TEXT    NOT NULL DEFAULT '',
+        chipped                TEXT    NOT NULL DEFAULT '',
+        breed                  TEXT    NOT NULL DEFAULT '',
+        age                    INTEGER NOT NULL DEFAULT 0,
+        plan_type              TEXT    NOT NULL DEFAULT '',
+        covered                TEXT    NOT NULL DEFAULT '',
+        deductible_rate        REAL    NOT NULL DEFAULT 0.0,
+        reimbursement_rate     REAL    NOT NULL DEFAULT 0.0,
+        term                   INTEGER NOT NULL DEFAULT 12,
+        monthly_premium        REAL    NOT NULL DEFAULT 0.0,
+        total_monthly_premium  REAL    NOT NULL DEFAULT 0.0,
+        monthly_extra          REAL    NOT NULL DEFAULT 0.0,
+        total_extra            REAL    NOT NULL DEFAULT 0.0,
+        comment                TEXT    NOT NULL DEFAULT '',
+        cover_consultation     INTEGER NOT NULL DEFAULT 0,
+        cover_rabies_vax       INTEGER NOT NULL DEFAULT 0,
+        cover_dhppil           INTEGER NOT NULL DEFAULT 0,
+        cover_corona_vax       INTEGER NOT NULL DEFAULT 0,
+        cover_lyme_vax         INTEGER NOT NULL DEFAULT 0,
+        cover_bordetella       INTEGER NOT NULL DEFAULT 0
+    )
+    """)
+    conn.commit()
+    conn.close()
+
+def save_application(record: dict, db_path=db_path):
+    init_db(db_path)
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    # 看這隻 chip 是否已存在
+    c.execute("SELECT id FROM application WHERE chipped = ?", (record['chipped'],))
+    row = c.fetchone()
+
+    # 一定要跟上面 CREATE TABLE 的欄位順序一模一樣
+    params = (
+        record['owner'],                   # owner
+        record['wechat_id'],               # wechat_id
+        record['phone'],                   # phone
+        record['email'],                   # email
+        record['pet_name'],                # pet_name
+        record['pet_type'],                # pet_type
+        record['chipped'],                 # chipped
+        record['breed'],                   # breed
+        record['age'],                     # age
+        record['plan_type'],               # plan_type
+        record['covered'],                 # covered
+        record['deductible_rate'],         # deductible_rate
+        record['reimbursement_rate'],      # reimbursement_rate
+        record['term'],                    # term
+        record['monthly_premium'],         # monthly_premium
+        record['total_monthly_premium'],   # total_monthly_premium
+        record['monthly_extra'],           # monthly_extra
+        record['total_extra'],             # total_extra
+        record['comment'],                 # comment
+        record.get('cover_consultation',0),# cover_consultation
+        record.get('cover_rabies_vax',0),  # cover_rabies_vax
+        record.get('cover_dhppil',0),      # cover_dhppil
+        record.get('cover_corona_vax',0),  # cover_corona_vax
+        record.get('cover_lyme_vax',0),    # cover_lyme_vax
+        record.get('cover_bordetella',0),  # cover_bordetella
+    )
+
+    if row:
+        # UPDATE
+        sql = """
+        UPDATE application SET
+            owner                 = ?,
+            wechat_id             = ?,
+            phone                 = ?,
+            email                 = ?,
+            pet_name              = ?,
+            pet_type              = ?,
+            chipped               = ?,
+            breed                 = ?,
+            age                   = ?,
+            plan_type             = ?,
+            covered               = ?,
+            deductible_rate       = ?,
+            reimbursement_rate    = ?,
+            term                  = ?,
+            monthly_premium       = ?,
+            total_monthly_premium = ?,
+            monthly_extra         = ?,
+            total_extra           = ?,
+            comment               = ?,
+            cover_consultation    = ?,
+            cover_rabies_vax      = ?,
+            cover_dhppil          = ?,
+            cover_corona_vax      = ?,
+            cover_lyme_vax        = ?,
+            cover_bordetella      = ?
+          WHERE id = ?
+        """
+        c.execute(sql, params + (row[0],))
+    else:
+        # INSERT
+        placeholders = ",".join("?" for _ in params)
+        sql = f"""
+        INSERT INTO application (
+            owner, wechat_id, phone, email,
+            pet_name, pet_type, chipped, breed, age,
+            plan_type, covered, deductible_rate, reimbursement_rate,
+            term, monthly_premium, total_monthly_premium,
+            monthly_extra, total_extra, comment,
+            cover_consultation, cover_rabies_vax,
+            cover_dhppil, cover_corona_vax,
+            cover_lyme_vax, cover_bordetella
+        ) VALUES ({placeholders})
+        """
+        c.execute(sql, params)
+
+    conn.commit()
+    conn.close()
+
+def is_existing_chip(chip_id: str, db_path: str = db_path) -> bool:
+    """
+    Check if the given chip ID already exists in the database.
+    """
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM application WHERE chipped = ?", (chip_id,))
+    exists = c.fetchone()[0] > 0
+    conn.close()
+    return exists
+
+
+    """
+    Insert a new application record or update an existing one by chip ID.
+    """
+    init_db(db_path)
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    # Check if this chip already exists
+    c.execute("SELECT id FROM application WHERE chipped = ?", (record['chipped'],))
+    row = c.fetchone()
+
+    # Prepare parameters in the correct order
+    params = (
+        record['owner'],
+        record['pet_name'],
+        record['pet_type'],
+        record['breed'],
+        record['age'],
+        record['covered'],
+        record['plan_type'],
+        record['deductible_rate'],
+        record['reimbursement_rate'],
+        record['term'],
+        record['monthly_premium'],
+        record['total_monthly_premium'],
+        record['monthly_extra'],
+        record['total_extra'],
+        record['chipped'],
+        record['phone'],
+        record['email'],
+        record['comment'],
+        record['wechat_id'],
+        record.get('cover_consultation', 0),
+        record.get('cover_rabies_vax', 0),
+        record.get('cover_dhppil', 0),
+        record.get('cover_corona_vax', 0),
+        record.get('cover_lyme_vax', 0),
+        record.get('cover_bordetella', 0),
+    )
+
+    if row:
+        # UPDATE existing record
+        sql = """
+        UPDATE application
+           SET owner                  = ?,
+               pet_name               = ?,
+               pet_type               = ?,
+               breed                  = ?,
+               age                    = ?,
+               covered                = ?,
+               deductible_rate        = ?,
+               reimbursement_rate     = ?,
+               term                   = ?,
+               plan_type              = ?,
+               monthly_premium        = ?,
+               total_monthly_premium  = ?,
+               monthly_extra          = ?,
+               total_extra            = ?,
+               chipped                = ?,
+               phone                  = ?,
+               email                  = ?,
+               comment                = ?,
+               wechat_id              = ?,
+               cover_consultation     = ?,
+               cover_rabies_vax       = ?,
+               cover_dhppil           = ?,
+               cover_corona_vax       = ?,
+               cover_lyme_vax         = ?,
+               cover_bordetella       = ?
+         WHERE id = ?
+        """
+        c.execute(sql, params + (row[0],))
+
+    else:
+        # INSERT new record
+        placeholders = ','.join('?' for _ in range(len(params)))
+        sql = f"""
+        INSERT INTO application (
+            owner, pet_name, pet_type, breed, age, covered,
+            deductible_rate, reimbursement_rate, term,
+            monthly_premium, total_monthly_premium, monthly_extra, total_extra, plan_type,
+            chipped, phone, email, comment, wechat_id,
+            cover_consultation, cover_rabies_vax, cover_dhppil,
+            cover_corona_vax, cover_lyme_vax, cover_bordetella
+        ) VALUES ({placeholders})
+        """
+        c.execute(sql, params)
+
+    conn.commit()
+    conn.close()
+
+
+
+funeral_rates = [.00033, .00017, .0005, .00083, .0025]
+humane_destruction = 750
+cremation = [750, 1250, 3000]
+cremation_rates = [.0005, .0025, .0001]
+corpse = [375, 500, 2500]
+corpse_rates = [.0005, .0025, .0001]
+staycation = [875, 1000, 1125]
+staycation_rate = [.002, .001, .0025, .004, .006]
+abandoned = 2500
+beauty1 = [200, 220, 240]
+beauty1_rate = [.15, .12, .1]
+beauty2 = [140, 160, 180]
+beauty2_rate = .25
+vaccincation = [600/12, 900/12, 800/12, 800/12, 800/12]
+consultation = 300; follow_up = 160; quarantine = 100
+surgery = [321, 993.32, 1519.75, 2085.79, 2700]
+sterilization_male = [1048.35, 104.835, 20.967, 10.4835, 4.1934]
+sterilization_female = [1129.85, 112.985, 22.597, 11.2985, 4.5194]
+
+
+
+def premium_calculation_private(weight, age, 
+                        pet_type = None, 
+                        term = None, deductible_rate = None, reimbursement_rate = None,
+                        cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
+                        cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
+    if age <= 1:
+        age_idx = 0
+    elif 2 <= age <= 4:
+        age_idx = 1
+    elif 5 <= age <= 6:
+        age_idx = 2
+    elif 7 <= age <= 8:
+        age_idx = 3
+    else: 
+        age_idx = 4
+
+    if weight <= 15:
+        weight_idx1 = 0
+    elif 16 <= weight <= 50:
+        weight_idx1 = 1
+    else:
+        weight_idx1 = 2
+
+    if weight <= 10:
+        weight_idx2 = 0
+    elif 11 <= weight <= 20:
+        weight_idx2 = 1
+    else:
+        weight_idx2 = 2
+
+    funeral_fee = (humane_destruction * funeral_rates[age_idx] + 
+                   cremation[weight_idx1] * cremation_rates[weight_idx1] + 
+                   corpse[weight_idx1] * corpse_rates[weight_idx1])
+    staycation_fee = staycation[weight_idx1] * staycation_rate[age_idx] * 3
+    beauty_fee = (beauty1[weight_idx2] * beauty1_rate[weight_idx2] + 
+                  beauty2[weight_idx2] * beauty2_rate)
+    surgery_fee = surgery[age_idx]
+
+    # Covered for consultation and vaccination
+    # for staycation, since there will be tier, so need to decide what days for tier, then have the fee * days
+    # default it 5 days per month
+    base_premium = (funeral_fee
+                  + staycation_fee
+                  + beauty_fee
+                  + surgery_fee)
+
+    net_premium = base_premium * (1 - deductible_rate) * reimbursement_rate
+
+    if cover_consultation:
+        net_premium += consultation   + follow_up*0.4 \
+                     + quarantine     + 60*0.05
+    if cover_rabies_vax:
+        net_premium += vaccincation[0]
+    if cover_dhppil:
+        net_premium += vaccincation[1]
+    if cover_corona_vax:
+        net_premium += vaccincation[2]
+    if cover_lyme_vax:
+        net_premium += vaccincation[3]
+    if cover_bordetella:
+        net_premium += vaccincation[4]
+    
+    if term == 12:
+        total_monthly_premium = net_premium * 1.0 * term
+        extra_premium = net_premium * 0
+        total_extra_premium = extra_premium * term
+    elif term == 6:
+        total_monthly_premium = net_premium * 1.05 * term
+        extra_premium = net_premium * .05
+        total_extra_premium = extra_premium * term
+    else:
+        total_monthly_premium = net_premium * 1.1 * term
+        extra_premium = net_premium * .1
+        total_extra_premium = extra_premium * term
+
+    return round(total_monthly_premium, 2), round(extra_premium, 2), round(total_extra_premium, 2)
+
+
+
+def premium_calculation_public(weight = None, age = None, 
+                        pet_type = None, 
+                        term = None, deductible_rate = None, reimbursement_rate = None,
+                        cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
+                        cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
+    return 0
+
+
+
+# Work on Public_plan premium calculation
+# Work on cat maybe? See if there's any data about the fee
+# Work on QR code, ads, picture, icon, add some photo to the button, maybe some gif?
+

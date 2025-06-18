@@ -1,0 +1,8 @@
+streamlit
+pandas
+qrcode
+sqlite3
+numpy
+datetime
+time
+os
