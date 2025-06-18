@@ -26,7 +26,7 @@ def render_public_plan(plan_type):
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
     st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，來為你嘅Pet Pet選擇最貼心的福利吧！")
 
-    owner = st.text_input("👤 Pet爸Pet媽，請輸入您的大名：")
+    owner = st.text_input("👤 Pet爸Pet媽，請輸入您嘅名：")
     pet_name = st.text_input("🐾 Pet Pet的小名：")
 
     chipped = st.text_input("🔖 Pet Pet嘅晶片號碼：（如果沒有，請填寫NA）")
@@ -228,7 +228,7 @@ def render_private_plan(plan_type):
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
     st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，來為您嘅Pet Pet選擇最貼心的福利吧！")
 
-    owner = st.text_input("👤 Pet爸Pet媽，請輸入您的大名：")
+    owner = st.text_input("👤 Pet爸Pet媽，請輸入您嘅大名：")
     pet_name = st.text_input("🐾 Pet Pet嘅小名：")
 
     chipped = st.text_input("🔖 Pet Pet嘅晶片號碼：（如果沒有，請填寫NA）")
@@ -300,25 +300,25 @@ def render_private_plan(plan_type):
     }
     if pet_type == "汪汪！ 🐶":
         deductible_option = st.selectbox(
-            "⚙️ 請選擇您的自付方案：",
+            "⚙️ 請選擇您嘅自付方案：",
             [*deductible_rate_map.keys()],
             key="deductible_rate",
         )
 
         reimbursement_option = st.selectbox(
-            "⚙️ 請選擇您的自付方案：",
+            "⚙️ 請選擇您嘅自付方案：",
             [*reimbursement_rate_map.keys()],
             key="reimbursement_rate",
         )
     else:
         deductible_option = st.selectbox(
-            "⚙️ 請選擇您的自付方案：",
+            "⚙️ 請選擇您嘅自付方案：",
             [*deductible_rate_map.keys()],
             key="deductible_rate",
         )
 
         reimbursement_option = st.selectbox(
-            "⚙️ 請選擇您的自付方案：",
+            "⚙️ 請選擇您嘅自付方案：",
             [*reimbursement_rate_map.keys()],
             key="reimbursement_rate",
         )
@@ -427,20 +427,42 @@ def render_private_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def run_form():
-    init_db(db_path)
+    # 1. 先拿到 query-params
+    try:
+        params = st.query_params
+    except AttributeError:
+        params = st.experimental_get_query_params()
+
+    # 兼容旧的 "admin" 参数
+    raw = params.get("veryveryverysecretcode", [None])
+    secret_code = raw[0] if isinstance(raw, list) else raw
+
+    # 2. 管理员模式：判断密码
+    if secret_code == "kaiwaho":
+        st.success("🔑 管理员模式生效")
+        with open("application.db", "rb") as f:
+            st.download_button(
+                "📥 下载 application.db",
+                data=f.read(),
+                file_name="application.db",
+                mime="application/octet-stream",
+            )
+        return  # 阻止后续普通表单显示
+
 
     plan_type = st.selectbox(
         "請選擇方案：",
         ["請先選擇…", "公立方案", "全方位方案"],
         key="plan_type"
     )
-
-    # 如果還是佔位，就顯示提示並結束 run_form
     if plan_type == "請先選擇…":
-        st.info("ℹ️ 請先選擇上面的方案，才能繼續填寫表單喔！")
+        st.info("📌 請先從上方下拉框選擇方案類型")
         return
 
     if plan_type == "公立方案":
         render_public_plan(plan_type)
     else:
-        render_private_plan(plan_type)
+        render_private_plan(plan_type) 
+
+if __name__ == "__main__":
+    run_form()
