@@ -354,7 +354,7 @@ def render_private_plan(plan_type):
     if deductible_rate is None or reimbursement_rate is None:
         st.info("請先選擇「自付方案」與「理賠方案」！")
     else:
-        total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_public(
+        total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_private(
             weight=weight,
             age=age,
             term=term,
