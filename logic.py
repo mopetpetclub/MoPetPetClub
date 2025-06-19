@@ -344,7 +344,7 @@ def premium_calculation_public(weight = None, age = None,
                         cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
                         cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
 
-    return 0
+    return 0, 0, 0
 
 
 
