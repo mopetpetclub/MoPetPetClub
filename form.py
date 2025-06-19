@@ -383,22 +383,24 @@ def run_form():
     # 2. 管理员模式：判断密码
     if secret_code == "kaiwaho":
         st.success("🔑 管理员模式生效")
+
+        # 重置数据库按钮
         if st.button("🔄 重置資料庫"):
             if os.path.exists(db_path):
                 os.remove(db_path)
-            st.success("✅ 已清空並重新初始化 application.db")
-        
-        # —— 下载数据库按钮 —— 
-        with open(db_path, "rb") as f:
-            st.download_button(
-                "📥 下載 application.db",
-                data=f.read(),
-                file_name="application.db",
-                mime="application/octet-stream",
-            )
-        return
+            init_db(db_path)
+            st.success("✅ 資料庫已重置並重建")
 
-        return  # 阻止后续普通表单显示
+    # **保证文件一定存在后再下载**
+        with open(db_path, "rb") as f:
+            data = f.read()
+        st.download_button(
+            "📥 下載 application.db",
+            data=data,
+            file_name="application.db",
+            mime="application/octet-stream",
+        )
+        return
 
 
     col1, col2 = st.columns([2, 1])
