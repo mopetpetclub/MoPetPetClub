@@ -494,8 +494,6 @@ def run_form():
 
     if plan_type == "🍁 公立舒心組":
         render_public_plan(plan_type)
-    else:
-        render_private_plan(plan_type) 
 
 
 if __name__ == "__main__":
