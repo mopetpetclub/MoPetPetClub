@@ -23,17 +23,31 @@ def multi_checkbox(options: dict[str, str], cols: int = 2) -> list[str]:
 
 # 主表單
 def render_public_plan(plan_type):
-    weight = None
-    weight_valid = False
-    deductible_rate = None
-    reimbursement_rate = None
-    term = None
-    cover_consultation = False
-    cover_rabies_vax = False
-    cover_dhppil = False
-    cover_corona_vax = False
-    cover_lyme_vax = False
-    cover_bordetella = False
+    owner                 = None
+    wechat_id             = None
+    phone                 = None
+    email                 = None
+    pet_name              = None
+    pet_type              = None
+    chipped               = None
+    breed                 = None
+    age                   = None
+    plan_type             = None
+    covered               = None
+    deductible_rate       = None
+    reimbursement_rate    = None
+    term                  = None
+    monthly_premium       = None
+    total_monthly_premium = None
+    extra_premium         = None
+    total_extra_premium   = None
+    comment               = None
+    cover_consultation    = None
+    cover_rabies_vax      = None
+    cover_dhppil          = None
+    cover_corona_vax      = None
+    cover_lyme_vax        = None
+    cover_bordetella      = None
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
     st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，下面填返你同你 Pet Pet 嘅資料啦！")
 
@@ -243,17 +257,31 @@ def render_public_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def render_private_plan(plan_type):
-    weight = None
-    weight_valid = False
-    deductible_rate = None
-    reimbursement_rate = None
-    term = None
-    cover_consultation = False
-    cover_rabies_vax = False
-    cover_dhppil = False
-    cover_corona_vax = False
-    cover_lyme_vax = False
-    cover_bordetella = False
+    owner                 = None
+    wechat_id             = None
+    phone                 = None
+    email                 = None
+    pet_name              = None
+    pet_type              = None
+    chipped               = None
+    breed                 = None
+    age                   = None
+    plan_type             = None
+    covered               = None
+    deductible_rate       = None
+    reimbursement_rate    = None
+    term                  = None
+    monthly_premium       = None
+    total_monthly_premium = None
+    extra_premium         = None
+    total_extra_premium   = None
+    comment               = None
+    cover_consultation    = None
+    cover_rabies_vax      = None
+    cover_dhppil          = None
+    cover_corona_vax      = None
+    cover_lyme_vax        = None
+    cover_bordetella      = None
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
     st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，下面填返你同你 Pet Pet 嘅資料啦！")
 
