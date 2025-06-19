@@ -277,14 +277,14 @@ def render_private_plan(plan_type):
         weight_valid = False
         
     st.markdown("### 📝 選擇需要的福利 (可多選)")
-    cover_options = {"診金": "常規診療、門診費用補助",
-                    "狂犬病預防疫苗（每劑）": "每年一針",
-                    "DHPPiL 五合一": "每年一針",
-                    "冠狀病毒疫苗": "每年一針",
-                    "萊姆病疫苗": "每年一針",
-                    "犬咳（Bordetella）": "每年一針"}
+    cover_options = {"診金": "常規診療、門診費用補助，我哋預每個月一次基本既門診費同埋複診！",
+                    "狂犬病預防疫苗（每劑）": "預每年一針！",
+                    "DHPPiL 五合一": "預每年一針！",
+                    "冠狀病毒疫苗": "預每年一針！",
+                    "萊姆病疫苗": "預每年一針！",
+                    "犬咳（Bordetella）": "預每年一針！"}
 
-    covered = multi_checkbox(cover_options, cols = 3)
+    covered = multi_checkbox(cover_options, cols = 1)
     cover_consultation   = "診金" in covered
     cover_rabies_vax     = "狂犬病預防疫苗（每劑）" in covered
     cover_dhppil         = "DHPPiL 五合一"       in covered
@@ -310,18 +310,25 @@ def render_private_plan(plan_type):
             "⚙️ 請選擇您的自付方案：",
             [*deductible_rate_map.keys()],
             key="deductible_rate",
+            help = "🍀 綠意款係最高級，🌸 櫻花款喺中級，🎉 戰鼓款喺普通款\n" \
+                   "\n 例如：如果係普通款，手術費喺MOP 1000，自付額大嘅係 MOP 200；如果係最高級，自付額大嘅係 MOP 100"
         )
 
         reimbursement_option = st.selectbox(
             "⚙️ 請選擇您的自付方案：",
             [*reimbursement_rate_map.keys()],
             key="reimbursement_rate",
+            help = "🌻 向陽款係最高級, ❄️ 冰晶款喺中級, 🍁 楓葉款普通款\n" \
+                   "\n 例如：如果係普通款，手術費喺MOP 1000，自付額大嘅喺 MOP 100，咁最後賠償係 MOP 630\n" \
+                   "\n 例如：如果係最高級款，手術費喺MOP 1000，自付額大嘅喺 MOP 100，咁最後賠償係 MOP 810"
         )
     else:
         deductible_option = st.selectbox(
             "⚙️ 請選擇您的自付方案：",
             [*deductible_rate_map.keys()],
             key="deductible_rate",
+            help = "🍀 綠意款係最高級，🌸 櫻花款喺中級，🎉 戰鼓款喺普通款\n" \
+                   "\n 如果係普通款，手術費喺MOP 1000，自付額大嘅係 MOP 200；如果係最高級，自付額大嘅係 MOP 100"
         )
 
         reimbursement_option = st.selectbox(
@@ -341,13 +348,13 @@ def render_private_plan(plan_type):
         6: "半載悠遊（每 6 個月）",
         12: "全年安心（每 12 個月）"
         }[x],
-        help = '會員期',
+        help = '越長嘅會員期，手續費越少，12個月直接免會員費！',
         key="term"
     )
     if deductible_rate is None or reimbursement_rate is None:
         st.info("請先選擇「自付方案」與「理賠方案」！")
     else:
-        total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_private(
+        total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_public(
             weight=weight,
             age=age,
             term=term,
