@@ -23,6 +23,17 @@ def multi_checkbox(options: dict[str, str], cols: int = 2) -> list[str]:
 
 # 主表單
 def render_public_plan(plan_type):
+    weight = None
+    weight_valid = False
+    deductible_rate = None
+    reimbursement_rate = None
+    term = None
+    cover_consultation = False
+    cover_rabies_vax = False
+    cover_dhppil = False
+    cover_corona_vax = False
+    cover_lyme_vax = False
+    cover_bordetella = False
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
     st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，下面填返你同你 Pet Pet 嘅資料啦！")
 
@@ -61,8 +72,6 @@ def render_public_plan(plan_type):
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     st.write(f"🐥 Pet Pet而家：**{age}** 歲囉！")
     weight_input = st.text_input("⚖️ Pet Pet體重（kg）：", placeholder="例：5.2")
-    weight = None
-    weight_valid = None
     try:
         weight = float(weight_input)
         weight_valid = True
@@ -234,6 +243,17 @@ def render_public_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def render_private_plan(plan_type):
+    weight = None
+    weight_valid = False
+    deductible_rate = None
+    reimbursement_rate = None
+    term = None
+    cover_consultation = False
+    cover_rabies_vax = False
+    cover_dhppil = False
+    cover_corona_vax = False
+    cover_lyme_vax = False
+    cover_bordetella = False
     st.markdown("# 🐶🐱 摸Pet Pet Club 申請表 🐾")
     st.write("🐾 嘿！歡迎加入 **摸Pet Pet Club** 🎉，下面填返你同你 Pet Pet 嘅資料啦！")
 
