@@ -374,7 +374,7 @@ def render_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def run_form():
-    # 1. 先拿到 query-params
+    init_db(db_path)
     try:
         params = st.query_params
     except AttributeError:
@@ -390,7 +390,6 @@ def run_form():
         if st.button("🔄 重置資料庫"):
             if os.path.exists(db_path):
                 os.remove(db_path)
-            init_db(db_path)
             st.success("✅ 已清空並重新初始化 application.db")
         
         # —— 下载数据库按钮 —— 
