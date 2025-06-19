@@ -382,9 +382,7 @@ def render_plan(plan_type):
 def run_form():
     # —— 统一使用 experimental_get_query_params()
     params = st.experimental_get_query_params()
-    st.write("▶ Query Params:", params)
     secret_code = params.get("veryveryverysecretcode", [None])[0]
-    st.write("▶ secret_code:", secret_code)
 
     init_db(db_path)
 
