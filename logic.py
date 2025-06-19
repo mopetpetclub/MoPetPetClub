@@ -72,7 +72,7 @@ def save_application(record: dict, db_path=db_path):
         record['pet_type'],                # pet_type
         record['pet_sex'],
         record['color'],
-        record['nueter'],
+        record['neuter'],
         record['chipped'],                 # chipped
         record['breed'],                   # breed
         record['age'],                     # age

@@ -301,10 +301,6 @@ def render_plan(plan_type):
         if term not in [3,6,12]:
             errors.append("⏰ 請選擇繳費期數")
 
-        # 9. 福利多選
-        if not covered:
-            errors.append("✅ 請至少選擇一項福利")
-
         # 最后如果有错误，一次性报出来
         if errors:
             st.error("😿 以下欄位需補充或修正：")
