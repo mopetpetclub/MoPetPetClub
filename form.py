@@ -380,40 +380,25 @@ def render_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def run_form():
+    # —— 统一使用 experimental_get_query_params()
+    params = st.experimental_get_query_params()
+    st.write("▶ Query Params:", params)
+    secret_code = params.get("veryveryverysecretcode", [None])[0]
+    st.write("▶ secret_code:", secret_code)
+
     init_db(db_path)
-    try:
-        params = st.query_params
-    except AttributeError:
-        params = st.experimental_get_query_params()
 
-    # 兼容旧的 "admin" 参数
-    raw = params.get("veryveryverysecretcode", [None])
-    secret_code = raw[0] if isinstance(raw, list) else raw
-
-    # 2. 管理员模式：判断密码
     if secret_code == "kaiwaho":
         st.success("🔑 管理员模式生效")
-        st.write("▶ Query Params:", st.experimental_get_query_params())
-        st.write("▶ secret_code:", secret_code)
         show_db_contents(db_path)
-
-        # 重置数据库按钮
         if st.button("🔄 重置資料庫"):
-            if os.path.exists(db_path):
-                os.remove(db_path)
+            os.remove(db_path)
             init_db(db_path)
-            st.success("✅ 資料庫已重置並重建")
-
-    # **保证文件一定存在后再下载**
+            st.success("✅ 已重置資料庫")
         with open(db_path, "rb") as f:
-            data = f.read()
-        st.download_button(
-            "📥 下載 application.db",
-            data=data,
-            file_name="application.db",
-            mime="application/octet-stream",
-        )
+            st.download_button("📥 下載 application.db", f.read(), "application.db")
         return
+
 
 
     col1, col2 = st.columns([2, 1])
