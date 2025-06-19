@@ -65,41 +65,42 @@ def save_application(record: dict, db_path=db_path):
 
     # 一定要跟上面 CREATE TABLE 的欄位順序一模一樣
     params = (
-        record['owner'],                   # owner
-        record['wechat_id'],               # wechat_id
-        record['phone'],                   # phone
-        record['email'],                   # email
-        record['pet_name'],                # pet_name
-        record['pet_type'],                # pet_type
+        record['owner'],
+        record['wechat_id'],
+        record['phone'],
+        record['email'],
+        record['pet_name'],
+        record['pet_type'],
         record['pet_sex'],
+        record['chipped'],
+        record['breed'],
+        record['age'],
+        record['weight'],
         record['color'],
         record['neuter'],
-        record['chipped'],                 # chipped
-        record['breed'],                   # breed
-        record['age'],                     # age
         record['q1'],
         record['q2'],
         record['q3'],
         record['q4'],
         record['q5'],
         record['medical_history'],
-        record['plan_type'],               # plan_type
-        record['covered'],                 # covered
-        record['deductible_rate'],         # deductible_rate
-        record['reimbursement_rate'],      # reimbursement_rate
-        record['term'],                    # term
-        record['monthly_premium'],         # monthly_premium
-        record['total_monthly_premium'],   # total_monthly_premium
-        record['monthly_extra'],           # monthly_extra
-        record['total_extra'],             # total_extra
-        record['comment'],                 # comment
+        record['plan_type'],
+        record['covered'],
+        record['deductible_rate'],
+        record['reimbursement_rate'],
+        record['term'],
+        record['monthly_premium'],
+        record['total_monthly_premium'],
+        record['monthly_extra'],
+        record['total_extra'],
         record['effective_date'],
-        record.get('cover_consultation',0),# cover_consultation
-        record.get('cover_rabies_vax',0),  # cover_rabies_vax
-        record.get('cover_dhppil',0),      # cover_dhppil
-        record.get('cover_corona_vax',0),  # cover_corona_vax
-        record.get('cover_lyme_vax',0),    # cover_lyme_vax
-        record.get('cover_bordetella',0),  # cover_bordetella
+        record['comment'],
+        record.get('cover_consultation', 0),
+        record.get('cover_rabies_vax', 0),
+        record.get('cover_dhppil', 0),
+        record.get('cover_corona_vax', 0),
+        record.get('cover_lyme_vax', 0),
+        record.get('cover_bordetella', 0),
     )
 
     if row:
@@ -149,14 +150,14 @@ def save_application(record: dict, db_path=db_path):
         placeholders = ",".join("?" for _ in params)
         sql = f"""
         INSERT INTO application (
-            owner, wechat_id, phone, email, pet_sex,
-            pet_name, pet_type, chipped, breed, age, color, q1, q2, q3, q4, q5,
-            medical_history, plan_type, covered, deductible_rate, reimbursement_rate,
-            term, monthly_premium, total_monthly_premium,
-            monthly_extra, total_extra, comment, effective_date,
-            cover_consultation, cover_rabies_vax, neuter,
-            cover_dhppil, cover_corona_vax,
-            cover_lyme_vax, cover_bordetella
+            owner, wechat_id, phone, email,
+            pet_name, pet_type, pet_sex, chipped, breed, age, weight, color, neuter,
+            q1, q2, q3, q4, q5, medical_history,
+            plan_type, covered,
+            deductible_rate, reimbursement_rate, term,
+            monthly_premium, total_monthly_premium, monthly_extra, total_extra,
+            effective_date, comment,
+            cover_consultation, cover_rabies_vax, cover_dhppil, cover_corona_vax, cover_lyme_vax, cover_bordetella
         ) VALUES ({placeholders})
         """
         c.execute(sql, params)
@@ -472,4 +473,11 @@ def premium_calculation_public(weight = None, age = None, pet_sex = None,
 # Work on Public_plan premium calculation
 # Work on cat maybe? See if there's any data about the fee
 # Work on QR code, ads, picture, icon, add some photo to the button, maybe some gif?
-
+# Set Regulations
+# Seasonal factors
+# Claims after purchasing immediately? No
+# Marketing Stratergies:
+# Multiple Pets discounts, refer discounts, 
+# Adjust the premium? May or May not, increase or decrease, based on everything
+# First 300 member have some special benefits?
+# Claim forms! Very important, recall how to prevent fraud, maybe use creditibility model

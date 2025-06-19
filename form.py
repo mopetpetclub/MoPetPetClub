@@ -2,12 +2,22 @@ import streamlit as st
 import time
 import datetime
 import qrcode
+import sqlite3
 import os
+import pandas as pd
 from logic import save_application, init_db, db_path, is_existing_chip, premium_calculation_private, premium_calculation_public
 from streamlit.runtime.scriptrunner.script_runner import RerunException, RerunData
 
 def rerun():
     raise RerunException(RerunData())
+
+def show_db_contents(db_path):
+    conn = sqlite3.connect(db_path)
+    df = pd.read_sql("SELECT * From application", conn)
+    conn.close()
+    st.markdown("### 📊 檢視目前所有申請紀錄")
+    st.dataframe(df)
+
 
 # 多選勾選框函式
 def multi_checkbox(options: dict[str, str], cols: int = 2) -> list[str]:
@@ -383,6 +393,7 @@ def run_form():
     # 2. 管理员模式：判断密码
     if secret_code == "kaiwaho":
         st.success("🔑 管理员模式生效")
+        show_db_contents(db_path)
 
         # 重置数据库按钮
         if st.button("🔄 重置資料庫"):
