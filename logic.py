@@ -343,6 +343,7 @@ def premium_calculation_public(weight = None, age = None,
                         term = None, deductible_rate = None, reimbursement_rate = None,
                         cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
                         cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
+
     return 0
 
 
