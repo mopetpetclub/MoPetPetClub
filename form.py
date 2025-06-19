@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import datetime
 import qrcode
+import os
 from logic import save_application, init_db, db_path, is_existing_chip, premium_calculation_private, premium_calculation_public
 from streamlit.runtime.scriptrunner.script_runner import RerunException, RerunData
 
@@ -37,7 +38,8 @@ def render_plan(plan_type):
     wechat_id = st.text_input("💬 Wechat ID（建議）")
     
     st.markdown("### 🐥 基本資訊")
-    pet_type = st.radio("請問你嘅Pet Pet喺？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"])  
+    pet_type = st.radio("請問你嘅Pet Pet喺？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"]) 
+    pet_sex = st.radio("Pet Pet 嘅性別？", ['男仔', '女仔']) 
     if pet_type == "喵喵！ 🐱（暫不開放！）":
         st.warning("呢度暫時未開貓貓申請，敬請期待～ 🐱💕")
         return 
@@ -69,7 +71,7 @@ def render_plan(plan_type):
         unsafe_allow_html=True
     )
 
-    neuter = st.radio(f"Pet Pet 絕育了嗎？：", ["是", "否"])
+    neuter = st.radio(f"Pet Pet 絕育了嗎？：", ["是", "否"], key = 'neuter')
 
     dob = st.date_input(
         "🎂 Pet Pet 嘅出生日期：",
@@ -268,6 +270,7 @@ def render_plan(plan_type):
 
             "pet_name": pet_name,
             "pet_type": pet_type,
+            "pet_sex": pet_sex,
             "chipped": chipped,
             "neuter": neuter,
             "breed": breed,
@@ -315,6 +318,7 @@ def render_plan(plan_type):
             "感謝你嘅支持，期待同你同Pet Pet 一齊玩樂！💕"
         )
         placeholder = st.empty()
+    st.write("🛠 Version: 2025-06-18-1")
     st.markdown("---")
     st.markdown("### 📱 掃描加摸Pet Pet Club 專員")
     # st.image("qrcode.png", use_column_width=True)
@@ -333,13 +337,22 @@ def run_form():
     # 2. 管理员模式：判断密码
     if secret_code == "kaiwaho":
         st.success("🔑 管理员模式生效")
-        with open("application.db", "rb") as f:
+        if st.button("🔄 重置資料庫"):
+            if os.path.exists(db_path):
+                os.remove(db_path)
+            init_db(db_path)
+            st.success("✅ 已清空並重新初始化 application.db")
+        
+        # —— 下载数据库按钮 —— 
+        with open(db_path, "rb") as f:
             st.download_button(
-                "📥 下载 application.db",
+                "📥 下載 application.db",
                 data=f.read(),
                 file_name="application.db",
                 mime="application/octet-stream",
             )
+        return
+
         return  # 阻止后续普通表单显示
 
 
@@ -354,9 +367,9 @@ def run_form():
         st.info("📌 請先從上方下拉框選擇方案類型")
         st.caption(
             "注：\n"
-            "• 🍁 公立舒心組：只享用公立政府獸醫的專屬優惠\n"
+            "\n• 🍁 公立舒心組：只享用公立政府獸醫的專屬優惠\n"
             "• 🛡️ 私家無憂組：享有公立政府獸醫 100% 優惠，還有私立獸醫額外福利"
-    )
+        )
         return
 
     render_plan(plan_type)

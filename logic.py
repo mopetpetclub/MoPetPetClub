@@ -19,6 +19,7 @@ def init_db(db_path=db_path):
         email                  TEXT    NOT NULL DEFAULT '',
         pet_name               TEXT    NOT NULL DEFAULT '',
         pet_type               TEXT    NOT NULL DEFAULT '',
+        pet_sex                TEXT    NOT NULL DEFAULT '',
         color                  TEXT    NOT NULL DEFAULT '',
         neuter                 TEXT    NOT NULL DEFAULT '',
         chipped                TEXT    NOT NULL DEFAULT '',
@@ -69,6 +70,7 @@ def save_application(record: dict, db_path=db_path):
         record['email'],                   # email
         record['pet_name'],                # pet_name
         record['pet_type'],                # pet_type
+        record['pet_sex'],
         record['color'],
         record['nueter'],
         record['chipped'],                 # chipped
@@ -109,6 +111,7 @@ def save_application(record: dict, db_path=db_path):
             email                 = ?,
             pet_name              = ?,
             pet_type              = ?,
+            pet_sex               = ?,
             chipped               = ?,
             nueter                = ?,
             breed                 = ?,
@@ -145,7 +148,7 @@ def save_application(record: dict, db_path=db_path):
         placeholders = ",".join("?" for _ in params)
         sql = f"""
         INSERT INTO application (
-            owner, wechat_id, phone, email,
+            owner, wechat_id, phone, email, pet_sex,
             pet_name, pet_type, chipped, breed, age, color, q1, q2, q3, q4, q5,
             medical_history, plan_type, covered, deductible_rate, reimbursement_rate,
             term, monthly_premium, total_monthly_premium,
@@ -295,8 +298,8 @@ sterilization_female = [1129.85, 112.985, 22.597, 11.2985, 4.5194]
 sterilization_male_public = [230.45,	23.045,	4.609,	2.3045,	0.9218]
 sterilization_female_public = [268.7,	26.87,	5.374,	2.687,	1.0748]
 
-def premium_calculation_private(weight, age, 
-                        pet_type = None, 
+def premium_calculation_private(weight, age, pet_sex = None,
+                        pet_type = None, neuter = None,
                         term = None, deductible_rate = None, reimbursement_rate = None,
                         cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
                         cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
@@ -356,7 +359,12 @@ def premium_calculation_private(weight, age,
         net_premium += vaccination[3]
     if cover_bordetella:
         net_premium += vaccination[4]
-    
+    if neuter == '是':
+        if [pet_sex] == '男仔':
+            net_premium -= sterilization_male
+        else:
+            net_premium -= sterilization_female
+
     if term == 12:
         total_monthly_premium = net_premium * 1.0 * term
         extra_premium = net_premium * 0
@@ -374,8 +382,8 @@ def premium_calculation_private(weight, age,
 
 
 
-def premium_calculation_public(weight = None, age = None, 
-                        pet_type = None, 
+def premium_calculation_public(weight = None, age = None, pet_sex = None,
+                        pet_type = None, neuter = None,
                         term = None, deductible_rate = None, reimbursement_rate = None,
                         cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
                         cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
@@ -435,6 +443,12 @@ def premium_calculation_public(weight = None, age = None,
         net_premium += vaccination[3]
     if cover_bordetella:
         net_premium += vaccination[4]
+    if neuter == '是':
+        if [pet_sex] == '男仔':
+            net_premium -= sterilization_male
+        else:
+            net_premium -= sterilization_female
+
     
     if term == 12:
         total_monthly_premium = net_premium * 1.0 * term
