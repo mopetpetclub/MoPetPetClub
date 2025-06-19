@@ -491,10 +491,7 @@ def run_form():
     if plan_type == "請先選擇…":
         st.info("📌 請先從上方下拉框選擇方案類型")
         return
-
-    if plan_type == "🍁 公立舒心組":
-        render_public_plan(plan_type)
-
+    render_public_plan(plan_type)
 
 if __name__ == "__main__":
     run_form()
