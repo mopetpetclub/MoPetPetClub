@@ -22,6 +22,7 @@ def init_db(db_path=db_path):
         chipped                TEXT    NOT NULL DEFAULT '',
         breed                  TEXT    NOT NULL DEFAULT '',
         age                    INTEGER NOT NULL DEFAULT 0,
+        pet_sex                TEXT    NOT NULL DEFAULT '',
         weight                 TEXT    NOT NULL DEFAULT '',
         color                  TEXT    NOT NULL DEFAULT '',
         neuter                 TEXT    NOT NULL DEFAULT '',
