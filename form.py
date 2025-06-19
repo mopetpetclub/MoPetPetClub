@@ -162,17 +162,17 @@ def render_public_plan(plan_type):
             monthly_premium = total_monthly_premium/term
         else:
             total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_private(
-            weight=weight,
-            age=age,
-            term=term,
-            deductible_rate=deductible_rate,
-            reimbursement_rate=reimbursement_rate,
-            cover_consultation=cover_consultation,
-            cover_rabies_vax=cover_rabies_vax,
-            cover_dhppil=cover_dhppil,
-            cover_corona_vax=cover_corona_vax,
-            cover_lyme_vax=cover_lyme_vax,
-            cover_bordetella=cover_bordetella,
+                weight=weight,
+                age=age,
+                term=term,
+                deductible_rate=deductible_rate,
+                reimbursement_rate=reimbursement_rate,
+                cover_consultation=cover_consultation,
+                cover_rabies_vax=cover_rabies_vax,
+                cover_dhppil=cover_dhppil,
+                cover_corona_vax=cover_corona_vax,
+                cover_lyme_vax=cover_lyme_vax,
+                cover_bordetella=cover_bordetella,
             )
             monthly_premium = total_monthly_premium/term
 
