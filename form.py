@@ -380,26 +380,33 @@ def render_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def run_form():
-    # —— 兼容新/旧查询 API，只调用一次
-    try:
-        params = st.query_params
-    except AttributeError:
-        params = st.experimental_get_query_params()
+    # 1. 兼容拿 query-params（只用 st.query_params 足矣）
+    params = st.query_params
 
-    # —— 调试看到底拿到啥
-    st.write("🔍 Debug — Query Params:", params)
+    # 2. 提取 secret_code
     raw = params.get("veryveryverysecretcode", None)
     if isinstance(raw, list):
         secret_code = raw[0]
     else:
         secret_code = raw
-    st.write("🔑 Debug — secret_code:", secret_code)
 
+    # 3. Debug 输出
+    # st.write("🔍 Debug — Query Params:", params)
+    # st.write("🔑 Debug — secret_code:", secret_code)
+
+    # 4. 初始化数据库
     init_db(db_path)
 
+    # 5. 管理员模式
     if secret_code == "kaiwaho":
         st.success("🔑 管理员模式生效")
-        # 其余 admin 逻辑...
+        show_db_contents(db_path)
+        if st.button("🔄 重置資料庫"):
+            os.remove(db_path)
+            init_db(db_path)
+            st.success("✅ 已重置資料庫")
+        with open(db_path, "rb") as f:
+            st.download_button("📥 下載 application.db", f.read(), "application.db")
         return
 
 
