@@ -244,20 +244,70 @@ def render_plan(plan_type):
     submitted = st.button("💌 立即送出，成為俱樂部一員，保護Pet Pet")
     comment = st.text_area("💬 其他留言或建議（選填）", help="留下您對 Club 嘅想法、建議都好 😊")
     if submitted:
-        # 驗證必填
         errors = []
-        if not owner:    errors.append("👤 Pet Pet主人姓名")
-        if not pet_name: errors.append("🐾 Pet Pet名字")
-        if not breed:    errors.append("🐾 Pet Pet品種")
-        if not phone:    errors.append("📞 聯絡電話")
-        if not email or '@' not in email: errors.append("✉️ 有效電郵")
-        if not chipped:  errors.append("🔖 晶片號碼")
-        if not weight_valid:
-            errors.append("🐾 體重（請輸入有效數字，例如 5.2）")
-        if deductible_option == "請選擇…" or reimbursement_option == "請選擇…":
-            errors.append("要選方案呀！")
+
+        # 1. 基本文本输入
+        if not owner:
+            errors.append("👤 Pet Pet主人姓名")
+        if not pet_name:
+            errors.append("🐾 Pet Pet名字")
+        if not chipped:
+            errors.append("🔖 晶片號碼")
+        if not phone:
+            errors.append("📞 聯絡電話")
+        if not email or '@' not in email:
+            errors.append("✉️ 有效電郵地址")
+        if not wechat_id:
+            errors.append("💬 Wechat ID（雖然可選，但建議填寫）")
+
+        # 2. 性别 & 絕育
+        if pet_sex not in ['男仔', '女仔']:
+            errors.append("⚥ 請選擇 Pet Pet 嘅性別")
+        if neuter not in ['是', '否']:
+            errors.append("🔪 請選擇 Pet Pet 是否絕育")
+
+        # 3. 品種
+        if not breed:
+            errors.append("🐶🐱 Pet Pet 品種")
+
+        # 4. 體重
+        if not weight_input or not weight_valid:
+            errors.append("⚖️ 請輸入有效嘅體重（例如 5.2）")
+
+        # 5. 問卷 q1–q5
+        if q1 not in ["Yes/是", "No/否"]:
+            errors.append("① 過去90天內治療狀況")
+        if q1 == "Yes/是" and not medical_history:
+            errors.append("請提供病歷詳情（第①題選 Yes 時必填）")
+        for idx, q in enumerate([q2, q3, q4, q5], start=2):
+            if q not in ["Yes/是", "No/否"]:
+                errors.append(f"第 {idx} 題問卷未填或格式錯誤")
+
+        # 6. 標記顏色
+        if not color:
+            errors.append("🖌️ 請選擇一個標記顏色")
+
+        # 7. 生效日期
+        if not effective_date:
+            errors.append("⏳ 請選擇會員生效日期")
+
+        # 8. 保單方案 & 費率選擇
+        if plan_type not in ["🍁 公立舒心組", "🛡️ 私家無憂組"]:
+            errors.append("🌟 請選擇「照顧方式」")
+        if deductible_option not in deductible_rate_map or deductible_rate is None:
+            errors.append("⚙️ 請選擇免賠比例")
+        if reimbursement_option not in reimbursement_rate_map or reimbursement_rate is None:
+            errors.append("🛎 請選擇理賠比例")
+        if term not in [3,6,12]:
+            errors.append("⏰ 請選擇繳費期數")
+
+        # 9. 福利多選
+        if not covered:
+            errors.append("✅ 請至少選擇一項福利")
+
+        # 最后如果有错误，一次性报出来
         if errors:
-            st.error("😿 以下欄位需補充：")
+            st.error("😿 以下欄位需補充或修正：")
             for e in errors:
                 st.markdown(f"- {e}")
             return
