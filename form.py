@@ -388,7 +388,11 @@ def run_form():
 
     # —— 调试看到底拿到啥
     st.write("🔍 Debug — Query Params:", params)
-    secret_code = params.get("veryveryverysecretcode", [None])[0]
+    raw = params.get("veryveryverysecretcode", None)
+    if isinstance(raw, list):
+        secret_code = raw[0]
+    else:
+        secret_code = raw
     st.write("🔑 Debug — secret_code:", secret_code)
 
     init_db(db_path)
