@@ -525,7 +525,7 @@ def run_form():
         st.info("📌 請先從上方下拉框選擇方案類型")
         return
 
-    if plan_type == "公立方案":
+    if plan_type == "🍁 公立舒心組":
         render_public_plan(plan_type)
     else:
         render_private_plan(plan_type) 
