@@ -380,9 +380,12 @@ def render_plan(plan_type):
     # st.image("qrcode.png", use_column_width=True)
 
 def run_form():
-    # —— 统一使用 experimental_get_query_params()
-    params = st.experimental_get_query_params()
+    # —— 只用 st.query_params，不要用 experimental 版本
+    params = st.query_params
+    st.write("▶ Query Params:", params)
+    # st.query_params 返回的是一个 dict of list
     secret_code = params.get("veryveryverysecretcode", [None])[0]
+    st.write("▶ secret_code:", secret_code)
 
     init_db(db_path)
 
@@ -396,7 +399,6 @@ def run_form():
         with open(db_path, "rb") as f:
             st.download_button("📥 下載 application.db", f.read(), "application.db")
         return
-
 
 
     col1, col2 = st.columns([2, 1])
