@@ -19,9 +19,17 @@ def init_db(db_path=db_path):
         email                  TEXT    NOT NULL DEFAULT '',
         pet_name               TEXT    NOT NULL DEFAULT '',
         pet_type               TEXT    NOT NULL DEFAULT '',
+        color                  TEXT    NOT NULL DEFAULT '',
+        neuter                 TEXT    NOT NULL DEFAULT '',
         chipped                TEXT    NOT NULL DEFAULT '',
         breed                  TEXT    NOT NULL DEFAULT '',
         age                    INTEGER NOT NULL DEFAULT 0,
+        q1                     TEXT    NOT NULL DEFAULT '',
+        q2                     TEXT    NOT NULL DEFAULT '',
+        q3                     TEXT    NOT NULL DEFAULT '',
+        q4                     TEXT    NOT NULL DEFAULT '',    
+        q5                     TEXT    NOT NULL DEFAULT '',
+        medical_history        TEXT    NOT NULL DEFAULT '',
         plan_type              TEXT    NOT NULL DEFAULT '',
         covered                TEXT    NOT NULL DEFAULT '',
         deductible_rate        REAL    NOT NULL DEFAULT 0.0,
@@ -32,6 +40,7 @@ def init_db(db_path=db_path):
         monthly_extra          REAL    NOT NULL DEFAULT 0.0,
         total_extra            REAL    NOT NULL DEFAULT 0.0,
         comment                TEXT    NOT NULL DEFAULT '',
+        effective_date         TEXT    NOT NULL DEFAULT '',
         cover_consultation     INTEGER NOT NULL DEFAULT 0,
         cover_rabies_vax       INTEGER NOT NULL DEFAULT 0,
         cover_dhppil           INTEGER NOT NULL DEFAULT 0,
@@ -60,9 +69,17 @@ def save_application(record: dict, db_path=db_path):
         record['email'],                   # email
         record['pet_name'],                # pet_name
         record['pet_type'],                # pet_type
+        record['color'],
+        record['nueter'],
         record['chipped'],                 # chipped
         record['breed'],                   # breed
         record['age'],                     # age
+        record['q1'],
+        record['q2'],
+        record['q3'],
+        record['q4'],
+        record['q5'],
+        record['medical_history'],
         record['plan_type'],               # plan_type
         record['covered'],                 # covered
         record['deductible_rate'],         # deductible_rate
@@ -73,6 +90,7 @@ def save_application(record: dict, db_path=db_path):
         record['monthly_extra'],           # monthly_extra
         record['total_extra'],             # total_extra
         record['comment'],                 # comment
+        record['effective_date'],
         record.get('cover_consultation',0),# cover_consultation
         record.get('cover_rabies_vax',0),  # cover_rabies_vax
         record.get('cover_dhppil',0),      # cover_dhppil
@@ -92,8 +110,16 @@ def save_application(record: dict, db_path=db_path):
             pet_name              = ?,
             pet_type              = ?,
             chipped               = ?,
+            nueter                = ?,
             breed                 = ?,
+            color                 = ?,
             age                   = ?,
+            q1                    = ?,
+            q2                    = ?,
+            q3                    = ?,
+            q4                    = ?,
+            q5                    = ?,
+            medical_history       = ?,
             plan_type             = ?,
             covered               = ?,
             deductible_rate       = ?,
@@ -104,6 +130,7 @@ def save_application(record: dict, db_path=db_path):
             monthly_extra         = ?,
             total_extra           = ?,
             comment               = ?,
+            effective_date        = ?,
             cover_consultation    = ?,
             cover_rabies_vax      = ?,
             cover_dhppil          = ?,
@@ -119,11 +146,11 @@ def save_application(record: dict, db_path=db_path):
         sql = f"""
         INSERT INTO application (
             owner, wechat_id, phone, email,
-            pet_name, pet_type, chipped, breed, age,
-            plan_type, covered, deductible_rate, reimbursement_rate,
+            pet_name, pet_type, chipped, breed, age, color, q1, q2, q3, q4, q5,
+            medical_history, plan_type, covered, deductible_rate, reimbursement_rate,
             term, monthly_premium, total_monthly_premium,
-            monthly_extra, total_extra, comment,
-            cover_consultation, cover_rabies_vax,
+            monthly_extra, total_extra, comment, effective_date,
+            cover_consultation, cover_rabies_vax, neuter,
             cover_dhppil, cover_corona_vax,
             cover_lyme_vax, cover_bordetella
         ) VALUES ({placeholders})
