@@ -240,24 +240,33 @@ def is_existing_chip(chip_id: str, db_path: str = db_path) -> bool:
 
 funeral_rates = [.00033, .00017, .0005, .00083, .0025]
 humane_destruction = 750
+humane_destruction_public = 300
 cremation = [750, 1250, 3000]
+cremation_public = [300, 500, 1200]
 cremation_rates = [.0005, .0025, .0001]
 corpse = [375, 500, 2500]
+corpse_public = [150, 200, 1000]
 corpse_rates = [.0005, .0025, .0001]
 staycation = [875, 1000, 1125]
+staycation_public = [140, 160, 180]
 staycation_rate = [.002, .001, .0025, .004, .006]
-abandoned = 2500
 beauty1 = [200, 220, 240]
+beauty1_public = [100, 110, 120]
 beauty1_rate = [.15, .12, .1]
 beauty2 = [140, 160, 180]
+beauty2_public = [70, 80, 90]
 beauty2_rate = .25
+consultation = 300; consultation_public = 150
+follow_up = 160; follow_up_public = 80
+quarantine = 100; quarantine_public = 50
 vaccination = [600/12, 900/12, 800/12, 800/12, 800/12]
-consultation = 300; follow_up = 160; quarantine = 100
+vaccination_public = [50/12, 400/12, 400/12, 400/12, 400/12]
 surgery = [321, 993.32, 1519.75, 2085.79, 2700]
+surgery_public = [75.8, 55.1, 74.6, 102.8, 133.24]
 sterilization_male = [1048.35, 104.835, 20.967, 10.4835, 4.1934]
 sterilization_female = [1129.85, 112.985, 22.597, 11.2985, 4.5194]
-
-
+sterilization_male_public = [230.45,	23.045,	4.609,	2.3045,	0.9218]
+sterilization_female_public = [268.7,	26.87,	5.374,	2.687,	1.0748]
 
 def premium_calculation_private(weight, age, 
                         pet_type = None, 
@@ -343,8 +352,78 @@ def premium_calculation_public(weight = None, age = None,
                         term = None, deductible_rate = None, reimbursement_rate = None,
                         cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
                         cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
+    if age <= 1:
+        age_idx = 0
+    elif 2 <= age <= 4:
+        age_idx = 1
+    elif 5 <= age <= 6:
+        age_idx = 2
+    elif 7 <= age <= 8:
+        age_idx = 3
+    else: 
+        age_idx = 4
 
-    return 0, 0, 0
+    if weight <= 15:
+        weight_idx1 = 0
+    elif 16 <= weight <= 50:
+        weight_idx1 = 1
+    else:
+        weight_idx1 = 2
+
+    if weight <= 10:
+        weight_idx2 = 0
+    elif 11 <= weight <= 20:
+        weight_idx2 = 1
+    else:
+        weight_idx2 = 2
+
+    funeral_fee = (humane_destruction_public * funeral_rates[age_idx] + 
+                   cremation_public[weight_idx1] * cremation_rates[weight_idx1] + 
+                   corpse_public[weight_idx1] * corpse_rates[weight_idx1])
+    staycation_fee = staycation_public[weight_idx1] * staycation_rate[age_idx] * 3
+    beauty_fee = (beauty1_public[weight_idx2] * beauty1_rate[weight_idx2] + 
+                  beauty2_public[weight_idx2] * beauty2_rate)
+    surgery_fee = surgery_public[age_idx]
+
+    # Covered for consultation and vaccination
+    # for staycation, since there will be tier, so need to decide what days for tier, then have the fee * days
+    # default it 5 days per month
+    base_premium = (funeral_fee
+                  + staycation_fee
+                  + beauty_fee
+                  + surgery_fee)
+
+    net_premium = base_premium * (1 - deductible_rate) * reimbursement_rate
+
+    if cover_consultation:
+        net_premium += consultation   + follow_up*0.4 \
+                     + quarantine     + 30*0.05
+    if cover_rabies_vax:
+        net_premium += vaccination[0]
+    if cover_dhppil:
+        net_premium += vaccination[1]
+    if cover_corona_vax:
+        net_premium += vaccination[2]
+    if cover_lyme_vax:
+        net_premium += vaccination[3]
+    if cover_bordetella:
+        net_premium += vaccination[4]
+    
+    if term == 12:
+        total_monthly_premium = net_premium * 1.0 * term
+        extra_premium = net_premium * 0
+        total_extra_premium = extra_premium * term
+    elif term == 6:
+        total_monthly_premium = net_premium * 1.05 * term
+        extra_premium = net_premium * .05
+        total_extra_premium = extra_premium * term
+    else:
+        total_monthly_premium = net_premium * 1.1 * term
+        extra_premium = net_premium * .1
+        total_extra_premium = extra_premium * term
+
+
+    return round(total_monthly_premium, 2), round(extra_premium, 2), round(total_extra_premium, 2)
 
 
 
