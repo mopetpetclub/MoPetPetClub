@@ -160,9 +160,9 @@ def render_plan(plan_type):
     }
     reimbursement_rate_map = {
         "請選擇…": None,
-        "🌻 向陽款 - 90%": 0.90,
+        "🍁 楓葉款 - 70%": 0.70,      
         "❄️ 冰晶款 - 80%": 0.80,
-        "🍁 楓葉款 - 70%": 0.70
+        "🌻 向陽款 - 90%": 0.90
     }
     if pet_type == "汪汪！ 🐶":
         deductible_option = st.selectbox(
@@ -393,6 +393,8 @@ def run_form():
     # 2. 管理员模式：判断密码
     if secret_code == "kaiwaho":
         st.success("🔑 管理员模式生效")
+        st.write("▶ Query Params:", st.experimental_get_query_params())
+        st.write("▶ secret_code:", secret_code)
         show_db_contents(db_path)
 
         # 重置数据库按钮
