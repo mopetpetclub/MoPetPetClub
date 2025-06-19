@@ -58,7 +58,7 @@ def render_plan(plan_type):
                 ],
         "喵喵！ 🐱（暫不開放！）": []
     }
-
+    neuter = st.radio(f"Pet Pet 絕育了嗎？：", ["是", "否"], key = 'neuter')
     pet_idx = ["汪汪🐶", "喵喵🐱"]
     breed = st.selectbox(f"✨ 選擇您家{pet_idx}嘅品種：", breeds[pet_type])
     if breed == "其他":
@@ -71,7 +71,7 @@ def render_plan(plan_type):
         unsafe_allow_html=True
     )
 
-    neuter = st.radio(f"Pet Pet 絕育了嗎？：", ["是", "否"], key = 'neuter')
+
 
     dob = st.date_input(
         "🎂 Pet Pet 嘅出生日期：",
@@ -164,7 +164,7 @@ def render_plan(plan_type):
         )
 
         reimbursement_option = st.selectbox(
-            "⚙️ 請選擇您的理賠比例：",
+            "🛎 請選擇您的理賠比例：",
             [*reimbursement_rate_map.keys()],
             key="reimbursement_rate",
             help = "🌻 向陽款係最高級, ❄️ 冰晶款喺中級, 🍁 楓葉款普通款\n" \
@@ -181,7 +181,7 @@ def render_plan(plan_type):
         )
 
         reimbursement_option = st.selectbox(
-            "⚙️ 請選擇您的理賠比例：",
+            "🛎 請選擇您的理賠比例：",
             [*reimbursement_rate_map.keys()],
             key="reimbursement_rate",
         )
@@ -365,11 +365,9 @@ def run_form():
     )
     if plan_type == "請先選擇…":
         st.info("📌 請先從上方下拉框選擇方案類型")
-        st.caption(
-            "注：\n"
-            "\n• 🍁 公立舒心組：只享用公立政府獸醫的專屬優惠\n"
-            "• 🛡️ 私家無憂組：享有公立政府獸醫 100% 優惠，還有私立獸醫額外福利"
-        )
+        st.caption("注：")
+        st.caption("• 🍁 公立舒心組：只享用公立政府獸醫的專屬優惠")
+        st.caption("• 🛡️ 私家無憂組：享有公立政府獸醫 100% 優惠，還有私立獸醫額外福利")
         return
 
     render_plan(plan_type)
