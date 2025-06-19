@@ -9,3 +9,13 @@
   $ xcode-select --install
   $ pip install watchdog
             
+2025-06-18 15:52:48.142 Uncaught app execution
+Traceback (most recent call last):
+  File "/Users/kai/Desktop/Pet Insurance/venv/lib/python3.12/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 121, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "/Users/kai/Desktop/Pet Insurance/venv/lib/python3.12/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 645, in code_to_exec
+    exec(code, module.__dict__)
+  File "/Users/kai/Desktop/Pet Insurance/main.py", line 1, in <module>
+    from form import run_form
+ImportError: cannot import name 'run_form' from 'form' (/Users/kai/Desktop/Pet Insurance/form.py)

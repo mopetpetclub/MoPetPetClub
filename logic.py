@@ -251,7 +251,7 @@ beauty1 = [200, 220, 240]
 beauty1_rate = [.15, .12, .1]
 beauty2 = [140, 160, 180]
 beauty2_rate = .25
-vaccincation = [600/12, 900/12, 800/12, 800/12, 800/12]
+vaccination = [600/12, 900/12, 800/12, 800/12, 800/12]
 consultation = 300; follow_up = 160; quarantine = 100
 surgery = [321, 993.32, 1519.75, 2085.79, 2700]
 sterilization_male = [1048.35, 104.835, 20.967, 10.4835, 4.1934]
@@ -311,15 +311,15 @@ def premium_calculation_private(weight, age,
         net_premium += consultation   + follow_up*0.4 \
                      + quarantine     + 60*0.05
     if cover_rabies_vax:
-        net_premium += vaccincation[0]
+        net_premium += vaccination[0]
     if cover_dhppil:
-        net_premium += vaccincation[1]
+        net_premium += vaccination[1]
     if cover_corona_vax:
-        net_premium += vaccincation[2]
+        net_premium += vaccination[2]
     if cover_lyme_vax:
-        net_premium += vaccincation[3]
+        net_premium += vaccination[3]
     if cover_bordetella:
-        net_premium += vaccincation[4]
+        net_premium += vaccination[4]
     
     if term == 12:
         total_monthly_premium = net_premium * 1.0 * term

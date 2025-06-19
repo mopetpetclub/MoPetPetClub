@@ -1,10 +1,10 @@
-__pycache__/
-.py[cod]
-
-*.log
-
+# Python virtual environments
 venv/
-env/
-.venv/
+.env/
 
+# SQLite database
 application.db
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
