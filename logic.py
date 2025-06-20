@@ -5,6 +5,7 @@ import numpy as np
 
 db_path = os.path.join(os.path.dirname(__file__), "application.db")
 
+
 def init_db(db_path=db_path):
     os.makedirs(os.path.dirname(db_path) or '.', exist_ok=True)
     conn = sqlite3.connect(db_path)
@@ -59,31 +60,35 @@ def save_application(record: dict, db_path=db_path):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
-    # 看這隻 chip 是否已存在
+    # 先查是否已存在同样的 chip
     c.execute("SELECT id FROM application WHERE chipped = ?", (record['chipped'],))
     row = c.fetchone()
 
-    # 一定要跟上面 CREATE TABLE 的欄位順序一模一樣
+    # 按 CREATE TABLE 的字段顺序，准备 params（不含最后的 id）
     params = (
         record['owner'],
         record['wechat_id'],
         record['phone'],
         record['email'],
+
         record['pet_name'],
         record['pet_type'],
-        record['pet_sex'],
         record['chipped'],
         record['breed'],
         record['age'],
+        record['pet_sex'],
         record['weight'],
         record['color'],
         record['neuter'],
+
         record['q1'],
         record['q2'],
         record['q3'],
         record['q4'],
         record['q5'],
         record['medical_history'],
+
+        record['effective_date'],
         record['plan_type'],
         record['covered'],
         record['deductible_rate'],
@@ -93,7 +98,7 @@ def save_application(record: dict, db_path=db_path):
         record['total_monthly_premium'],
         record['monthly_extra'],
         record['total_extra'],
-        record['effective_date'],
+
         record['comment'],
         record.get('cover_consultation', 0),
         record.get('cover_rabies_vax', 0),
@@ -104,27 +109,32 @@ def save_application(record: dict, db_path=db_path):
     )
 
     if row:
-        # UPDATE
+        # UPDATE 语句，注意最后一个 ? 对应 row[0]
         sql = """
         UPDATE application SET
             owner                 = ?,
             wechat_id             = ?,
             phone                 = ?,
             email                 = ?,
+
             pet_name              = ?,
             pet_type              = ?,
-            pet_sex               = ?,
             chipped               = ?,
-            neuter                = ?,
             breed                 = ?,
-            color                 = ?,
             age                   = ?,
+            pet_sex               = ?,
+            weight                = ?,
+            color                 = ?,
+            neuter                = ?,
+
             q1                    = ?,
             q2                    = ?,
             q3                    = ?,
             q4                    = ?,
             q5                    = ?,
             medical_history       = ?,
+
+            effective_date        = ?,
             plan_type             = ?,
             covered               = ?,
             deductible_rate       = ?,
@@ -134,30 +144,32 @@ def save_application(record: dict, db_path=db_path):
             total_monthly_premium = ?,
             monthly_extra         = ?,
             total_extra           = ?,
+
             comment               = ?,
-            effective_date        = ?,
             cover_consultation    = ?,
             cover_rabies_vax      = ?,
             cover_dhppil          = ?,
             cover_corona_vax      = ?,
             cover_lyme_vax        = ?,
             cover_bordetella      = ?
-          WHERE id = ?
+        WHERE id = ?
         """
+        # params 前面对应上面的 ?, 最后再加 row[0]
         c.execute(sql, params + (row[0],))
+
     else:
-        # INSERT
+        # INSERT 时 placeholders 数量要和 params 一致
         placeholders = ",".join("?" for _ in params)
         sql = f"""
         INSERT INTO application (
             owner, wechat_id, phone, email,
-            pet_name, pet_type, pet_sex, chipped, breed, age, weight, color, neuter,
+            pet_name, pet_type, chipped, breed, age, pet_sex, weight, color, neuter,
             q1, q2, q3, q4, q5, medical_history,
-            plan_type, covered,
+            effective_date, plan_type, covered,
             deductible_rate, reimbursement_rate, term,
             monthly_premium, total_monthly_premium, monthly_extra, total_extra,
-            effective_date, comment,
-            cover_consultation, cover_rabies_vax, cover_dhppil, cover_corona_vax, cover_lyme_vax, cover_bordetella
+            comment, cover_consultation, cover_rabies_vax, cover_dhppil,
+            cover_corona_vax, cover_lyme_vax, cover_bordetella
         ) VALUES ({placeholders})
         """
         c.execute(sql, params)
