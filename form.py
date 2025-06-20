@@ -5,7 +5,7 @@ import qrcode
 import sqlite3
 import os
 import pandas as pd
-from logic import save_application, init_db, db_path, is_existing_chip, premium_calculation_private, premium_calculation_public
+from logic import save_application, init_db, db_path, is_existing_chip, premium_calculation_private_dog, premium_calculation_public_dog
 from streamlit.runtime.scriptrunner.script_runner import RerunException, RerunData
 
 def rerun():
@@ -214,7 +214,7 @@ def render_plan(plan_type):
         st.info("請先選擇「自付方案」與「理賠方案」！")
     else:
         if plan_type == "🍁 公立舒心組":
-            total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_public(
+            total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_public_dog(
                 weight=weight,
                 age=age,
                 term=term,
@@ -229,7 +229,7 @@ def render_plan(plan_type):
             )
             monthly_premium = total_monthly_premium/term
         else:
-            total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_private(
+            total_monthly_premium, extra_premium, total_extra_premium = premium_calculation_private_dog(
                 weight=weight,
                 age=age,
                 term=term,
