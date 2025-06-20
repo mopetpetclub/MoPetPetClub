@@ -105,20 +105,45 @@ def save_application(record: dict, db_path=db_path):
 
     if row:
         # UPDATE
-        sql = '''
+        sql = """
         UPDATE application SET
-            owner = ?, wechat_id = ?, phone = ?, email = ?,
-            pet_name = ?, pet_type = ?, pet_sex = ?, chipped = ?,
-            breed = ?, age = ?, weight = ?, color = ?, neuter = ?,
-            q1 = ?, q2 = ?, q3 = ?, q4 = ?, q5 = ?,
-            medical_history = ?, effective_date = ?, plan_type = ?,
-            covered = ?, deductible_rate = ?, reimbursement_rate = ?,
-            term = ?, monthly_premium = ?, total_monthly_premium = ?,
-            monthly_extra = ?, total_extra = ?, comment = ?,
-            cover_consultation = ?, cover_rabies_vax = ?,
-            cover_dhppil = ?, cover_corona_vax = ?,
-            cover_lyme_vax = ?, cover_bordetella = ?
-        WHERE id = ?'''
+            owner                 = ?,
+            wechat_id             = ?,
+            phone                 = ?,
+            email                 = ?,
+            pet_name              = ?,
+            pet_type              = ?,
+            pet_sex               = ?,
+            chipped               = ?,
+            nueter                = ?,
+            breed                 = ?,
+            color                 = ?,
+            age                   = ?,
+            q1                    = ?,
+            q2                    = ?,
+            q3                    = ?,
+            q4                    = ?,
+            q5                    = ?,
+            medical_history       = ?,
+            plan_type             = ?,
+            covered               = ?,
+            deductible_rate       = ?,
+            reimbursement_rate    = ?,
+            term                  = ?,
+            monthly_premium       = ?,
+            total_monthly_premium = ?,
+            monthly_extra         = ?,
+            total_extra           = ?,
+            comment               = ?,
+            effective_date        = ?,
+            cover_consultation    = ?,
+            cover_rabies_vax      = ?,
+            cover_dhppil          = ?,
+            cover_corona_vax      = ?,
+            cover_lyme_vax        = ?,
+            cover_bordetella      = ?
+          WHERE id = ?
+        """
         c.execute(sql, params + (row[0],))
     else:
         # INSERT
@@ -150,98 +175,6 @@ def is_existing_chip(chip_id: str, db_path: str = db_path) -> bool:
     exists = c.fetchone()[0] > 0
     conn.close()
     return exists
-
-
-    """
-    Insert a new application record or update an existing one by chip ID.
-    """
-    init_db(db_path)
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-
-    # Check if this chip already exists
-    c.execute("SELECT id FROM application WHERE chipped = ?", (record['chipped'],))
-    row = c.fetchone()
-
-    # Prepare parameters in the correct order
-    params = (
-        record['owner'],
-        record['pet_name'],
-        record['pet_type'],
-        record['breed'],
-        record['age'],
-        record['covered'],
-        record['plan_type'],
-        record['deductible_rate'],
-        record['reimbursement_rate'],
-        record['term'],
-        record['monthly_premium'],
-        record['total_monthly_premium'],
-        record['monthly_extra'],
-        record['total_extra'],
-        record['chipped'],
-        record['phone'],
-        record['email'],
-        record['comment'],
-        record['wechat_id'],
-        record.get('cover_consultation', 0),
-        record.get('cover_rabies_vax', 0),
-        record.get('cover_dhppil', 0),
-        record.get('cover_corona_vax', 0),
-        record.get('cover_lyme_vax', 0),
-        record.get('cover_bordetella', 0),
-    )
-
-    if row:
-        # UPDATE existing record
-        sql = """
-        UPDATE application
-           SET owner                  = ?,
-               pet_name               = ?,
-               pet_type               = ?,
-               breed                  = ?,
-               age                    = ?,
-               covered                = ?,
-               deductible_rate        = ?,
-               reimbursement_rate     = ?,
-               term                   = ?,
-               plan_type              = ?,
-               monthly_premium        = ?,
-               total_monthly_premium  = ?,
-               monthly_extra          = ?,
-               total_extra            = ?,
-               chipped                = ?,
-               phone                  = ?,
-               email                  = ?,
-               comment                = ?,
-               wechat_id              = ?,
-               cover_consultation     = ?,
-               cover_rabies_vax       = ?,
-               cover_dhppil           = ?,
-               cover_corona_vax       = ?,
-               cover_lyme_vax         = ?,
-               cover_bordetella       = ?
-         WHERE id = ?
-        """
-        c.execute(sql, params + (row[0],))
-
-    else:
-        # INSERT new record
-        placeholders = ','.join('?' for _ in range(len(params)))
-        sql = f"""
-        INSERT INTO application (
-            owner, pet_name, pet_type, breed, age, covered,
-            deductible_rate, reimbursement_rate, term,
-            monthly_premium, total_monthly_premium, monthly_extra, total_extra, plan_type,
-            chipped, phone, email, comment, wechat_id,
-            cover_consultation, cover_rabies_vax, cover_dhppil,
-            cover_corona_vax, cover_lyme_vax, cover_bordetella
-        ) VALUES ({placeholders})
-        """
-        c.execute(sql, params)
-
-    conn.commit()
-    conn.close()
 
 # Dog
 humane_destruction_rates_dog = [.00033, .00017, .0005, .00083, .0025]
@@ -458,88 +391,6 @@ def premium_calculation_public_dog(weight = None, age = None, pet_sex = None,
         extra_premium = net_premium * .1
         total_extra_premium = extra_premium * term
 
-
-    return round(total_monthly_premium, 2), round(extra_premium, 2), round(total_extra_premium, 2)
-
-def premium_calculation_private_dog(weight, age, pet_sex = None,
-                        pet_type = None, neuter = None,
-                        term = None, deductible_rate = None, reimbursement_rate = None,
-                        cover_consultation = None, cover_rabies_vax = None, cover_dhppil = None,
-                        cover_corona_vax = None, cover_lyme_vax = None, cover_bordetella = None):
-    if age <= 1:
-        age_idx = 0
-    elif 2 <= age <= 4:
-        age_idx = 1
-    elif 5 <= age <= 6:
-        age_idx = 2
-    elif 7 <= age <= 8:
-        age_idx = 3
-    else: 
-        age_idx = 4
-
-    if weight <= 15:
-        weight_idx1 = 0
-    elif 16 <= weight <= 50:
-        weight_idx1 = 1
-    else:
-        weight_idx1 = 2
-
-    if weight <= 10:
-        weight_idx2 = 0
-    elif 11 <= weight <= 20:
-        weight_idx2 = 1
-    else:
-        weight_idx2 = 2
-
-    funeral_fee = (humane_destruction_dog * humane_destruction_rates_dog[age_idx] + 
-                   cremation_dog[weight_idx1] * cremation_rates_dog[weight_idx1] + 
-                   corpse_dog[weight_idx1] * corpse_rates_dog[weight_idx1])
-    staycation_fee = staycation_dog[weight_idx1] * staycation_rate_dog[age_idx] * 3
-    beauty_fee = (beauty1_dog[weight_idx2] * beauty1_rate_dog[weight_idx2] + 
-                  beauty2_dog[weight_idx2] * beauty2_rate_dog)
-    surgery_fee = surgery_dog[age_idx]
-
-    # Covered for consultation and vaccination
-    # for staycation, since there will be tier, so need to decide what days for tier, then have the fee * days
-    # default it 5 days per month
-    base_premium = (funeral_fee
-                  + staycation_fee
-                  + beauty_fee
-                  + surgery_fee)
-
-    net_premium = base_premium * (1 - deductible_rate) * reimbursement_rate
-
-    if cover_consultation:
-        net_premium += consultation_dog   + follow_up_dog*0.4 \
-                     + quarantine_dog     + 60*0.05
-    if cover_rabies_vax:
-        net_premium += vaccination_dog[0]
-    if cover_dhppil:
-        net_premium += vaccination_dog[1]
-    if cover_corona_vax:
-        net_premium += vaccination_dog[2]
-    if cover_lyme_vax:
-        net_premium += vaccination_dog[3]
-    if cover_bordetella:
-        net_premium += vaccination_dog[4]
-    if neuter == '是':
-        if [pet_sex] == '男仔':
-            net_premium -= sterilization_male_dog
-        else:
-            net_premium -= sterilization_female_dog
-
-    if term == 12:
-        total_monthly_premium = net_premium * 1.0 * term
-        extra_premium = net_premium * 0
-        total_extra_premium = extra_premium * term
-    elif term == 6:
-        total_monthly_premium = net_premium * 1.05 * term
-        extra_premium = net_premium * .05
-        total_extra_premium = extra_premium * term
-    else:
-        total_monthly_premium = net_premium * 1.1 * term
-        extra_premium = net_premium * .1
-        total_extra_premium = extra_premium * term
 
     return round(total_monthly_premium, 2), round(extra_premium, 2), round(total_extra_premium, 2)
 
