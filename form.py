@@ -66,9 +66,9 @@ def run_form():
     pet_type = st.radio("請問你嘅Pet Pet喺？", ["汪汪！ 🐶", "喵喵！ 🐱（暫不開放！）"], key = 'pet_type') 
 
     if pet_type == "汪汪！ 🐶":
-        render_dog_plan(plan_type)
+        render_dog_plan(plan_type, pet_type)
     else:
-        render_cat_plan(plan_type)
+        render_cat_plan(plan_type, pet_type)
 
 # 多選勾選框函式
 def multi_checkbox(options: dict[str, str], cols: int = 2) -> list[str]:
