@@ -64,8 +64,8 @@ def run_form():
         st.caption("• 🛡️ 私家無憂組：享有公立政府獸醫 100% 優惠，還有私立獸醫額外福利")
         return
 
-    pet_type = st.selectbox("請問你嘅Pet Pet喺？", ["汪汪！ 🐶", "喵喵！ "], key = 'pet_type') 
-    if pet_type == "請問你嘅Pet Pet喺？":
+    pet_type = st.selectbox("請問你嘅Pet Pet喺？", ["請先選擇…", "汪汪！ 🐶", "喵喵！ "], key = 'pet_type') 
+    if pet_type == "請先選擇…":
         return
 
     if pet_type == "汪汪！ 🐶":
